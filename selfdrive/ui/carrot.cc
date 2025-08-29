@@ -1126,8 +1126,13 @@ protected:
         }
         nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BOTTOM);
         if (szPosRoadName.length() > 0) {
-          ui_draw_text(s, tbt_x + 200, tbt_y + 200, szPosRoadName.toStdString().c_str(), 40, COLOR_WHITE, BOLD);
-          //ui_draw_text(s, tbt_x + 190, tbt_y - 5, szPosRoadName.toStdString().c_str(), 40, COLOR_WHITE, BOLD);
+            float bounds[4];
+            nvgFontSize(s->vg, 40);
+            nvgTextBounds(s->vg, tbt_x + 200, tbt_y + 200, szPosRoadName.toStdString().c_str(), NULL, bounds);
+            float text_width = bounds[2] - bounds[0];
+            float text_height = bounds[3] - bounds[1];
+            ui_fill_rect(s->vg, { (int)bounds[0] - 10, (int)bounds[1] - 2, (int)text_width + 20, (int)text_height + 13 }, COLOR_GREEN, 10);
+            ui_draw_text(s, tbt_x + 200, tbt_y + 200, szPosRoadName.toStdString().c_str(), 40, COLOR_WHITE, BOLD);
         }
 
         if (nGoPosDist > 0 && nGoPosTime > 0) {
@@ -1176,6 +1181,7 @@ public:
           nGoPosTime = carrot_man.getNGoPosTime();
           szSdiDescr = QString::fromStdString(carrot_man.getSzSdiDescr());
           szPosRoadName = QString::fromStdString(carrot_man.getSzPosRoadName());
+		  szPosRoadName.remove("route=270.0");  // 新增：移除路名中的 route=270.0
           szTBTMainText = QString::fromStdString(carrot_man.getSzTBTMainText());
           
         }
